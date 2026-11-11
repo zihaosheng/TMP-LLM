@@ -1,356 +1,197 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
-  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142c38">
+  <meta name="description" content="TMP-LLM: locally deployed, fine-tuned language models for drafting Transportation Management Plans from historical WisDOT WisTMP records.">
+  <meta name="keywords" content="Transportation Management Plans, WisTMP, WisDOT, work zones, large language models, LoRA">
+  <meta property="og:title" content="TMP-LLM">
+  <meta property="og:description" content="From project context to operational TMP sections. A study of six locally deployed language models using historical WisTMP records.">
+  <meta property="og:type" content="website">
   <title>TMP-LLM</title>
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans"
-        rel="stylesheet">
-
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-  <link rel="icon" href="./static/images/XX.png">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-
-  <style>
-  html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 4rem;
-  }
-
-  a[href^="http"] {
-    color: limegreen;
-    text-decoration: none;
-  }
-  a[href^="http"]:hover {
-    color: green;
-    text-decoration: underline;
-  }
-  </style>
-
+  <link rel="icon" href="static/images/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="static/css/fonts/Product-Sans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="static/css/index.css">
+  <script src="static/js/index.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4L10 14M10 4H4v16h16v-6"/></symbol>
+    <symbol id="i-paper" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8l-5-5Zm0 0v6h5M8 13h8M8 17h6"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7V5Z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6M16 6l6 6-6 6M14 3l-4 18"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 3H3v6M15 3h6v6M21 15v6h-6M3 15v6h6"/></symbol>
+    <symbol id="i-model" viewBox="0 0 24 24"><path d="m12 3 9 5v9l-9 5-9-5V8l9-5ZM3 8l9 5 9-5M12 13v9M7.5 5.5l9 5"/></symbol>
+    <symbol id="i-sections" viewBox="0 0 24 24"><path d="M8 5h13M8 12h13M8 19h13M3 5h.01M3 12h.01M3 19h.01"/></symbol>
+  </svg>
 
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="#overview" aria-label="TMP-LLM home"><span class="road-mark" aria-hidden="true"><i></i></span>TMP<span class="wordmark-dash">—</span>LLM<img class="header-lab-logo" src="static/images/lab-logo.svg" width="1064" height="301" alt="Research lab logo"></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu<span aria-hidden="true">☰</span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="#overview" aria-current="location">Overview</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#demo">Demo</a>
+        <a href="#citation">Citation</a>
+        <a class="nav-paper" href="https://arxiv.org/abs/2610.10650" target="_blank" rel="noopener noreferrer">Read paper<svg class="icon"><use href="#i-external"/></svg></a>
+      </nav>
+    </div>
+  </header>
 
-
-
-<!--------------------------------------- Navigation --------------------------------------->
-<!--<nav class="navbar is-fixed-top" role="navigation"-->
-<!--     style="font-family: 'Google Sans', sans-serif; background: white; box-shadow: none;">-->
-<!--  <div class="container is-max-desktop">-->
-<!--    <div class="navbar-brand">-->
-<!--      <span class="navbar-item" style="font-weight: bold; font-size: 20px; cursor: default;">-->
-<!--        TMP-LLM Project Page-->
-<!--      </span>-->
-<!--    </div>-->
-<!--    <div class="navbar-menu is-active">-->
-<!--      <div class="navbar-end" style="font-size: 17px; gap: 0px;">-->
-<!--        <a class="navbar-item" href="#teaser">Teaser</a>-->
-<!--        <a class="navbar-item" href="#pipelines">1. Training Paradigm</a>-->
-<!--        <a class="navbar-item" href="#Results">2. Settings & Results</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</nav>-->
-
-
-
-
-<!------------------------------------------------------------------------------------------>
-<!------------------------------------------------------------------------------------------>
-<!------------------------------------ Title & Authors ------------------------------------->
-<!------------------------------------------------------------------------------------------>
-<section class="hero">
-  <div class="hero-bg-overlay"></div>
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-2 publication-title"
-              style="font-family: 'Google Sans', sans-serif; margin-top: 1rem;">
-
-              <img src="static/images/lab-logo.svg"
-                   style="height: 88px; vertical-align: middle; margin-right: 10px;"><br>
-            <div style="margin-top: 0.2rem;font-size: 1.8rem;">Large Language Model-Assisted Preparation of Transportation Management Plans: A Case Study with WisDOT WisTMP System</div>
-          </h1>
-
-          <div class="is-size-5 publication-authors" style="font-family: 'Google Sans', sans-serif; line-height: 1.4;">
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=3T-SILsAAAAJ">Zihao Sheng</a><sup>1</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=0QzhzL0AAAAJ">Pei Li</a><sup>2</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=RgO7ppoAAAAJ">Zilin Huang</a><sup>1</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=RZiRdWYAAAAJ">Yen-Jung Chen</a><sup>3</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=CNdSjWAAAAAJ">Yuhao Luo</a><sup>1</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=6m8LnLUAAAAJ">Zhengyang Wan</a><sup>1</sup></span><br>
-<!--              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=qa_mJTUAAAAJ">Jiancong Chen</a><sup>2</sup></span>-->
-<!--              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=hIt7KnUAAAAJ">Yansong Qu</a><sup>2</sup></span>-->
-<!--              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=kEpj_AsAAAAJ">Yue Leng</a><sup>4</sup></span>-->
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=h1Ig9g0AAAAJ">Steven T. Parker</a><sup>1</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=OipIar8AAAAJ">David A. Noyce</a><sup>1</sup></span>
-              <span class="author-block" style="margin-right: 10px;"><a href="https://scholar.google.com/citations?user=DPN2wc4AAAAJ">Sikai Chen</a><sup>1,✉</sup></span>
+  <main id="main">
+    <section class="hero section-anchor" id="overview" aria-labelledby="paper-title">
+      <div class="container publication-header">
+        <h1 id="paper-title">Large Language Model-Assisted Preparation of Transportation Management Plans</h1>
+        <p class="paper-subtitle">A Case Study with WisDOT WisTMP System</p>
+        <div class="authors" aria-label="Authors">
+          <div class="author-row">
+            <a href="https://scholar.google.com/citations?user=3T-SILsAAAAJ">Zihao Sheng<sup>1</sup></a>
+            <a href="https://scholar.google.com/citations?user=0QzhzL0AAAAJ">Pei Li<sup>2</sup></a>
+            <a href="https://scholar.google.com/citations?user=RgO7ppoAAAAJ">Zilin Huang<sup>1</sup></a>
+            <a href="https://scholar.google.com/citations?user=RZiRdWYAAAAJ">Yen-Jung Chen<sup>3</sup></a>
+            <a href="https://scholar.google.com/citations?user=CNdSjWAAAAAJ">Yuhao Luo<sup>1</sup></a>
+            <a href="https://scholar.google.com/citations?user=6m8LnLUAAAAJ">Zhengyang Wan<sup>1</sup></a>
           </div>
-
-          <div class="is-size-6 affiliations"
-               style="font-family: 'Google Sans', sans-serif; line-height: 1.4;">
-            <span class="author-block" style="margin-right: 10px;"><sup>1</sup> University of Wisconsin--Madison</span>
-              <span class="author-block" style="margin-right: 10px;"><sup>2</sup> University of Wyoming</span><br>
-            <span class="author-block" style="margin-right: 10px;"><sup>3</sup> Purdue University</span>
-<!--            <span class="author-block" style="margin-right: 10px;"><sup>4</sup> Google</span><br>-->
-            <span class="author-block" style="margin-right: 5px;"><sup>✉</sup> Corresponding Author</span>
-          </div>
-
-
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <!-- Paper Link. -->
-              <!----------------->
-              <span class="link-block">
-                <a href="https://arxiv.org/"
-                   class="external-link button is-normal is-rounded is-dark" rel="noopener noreferrer">
-                  <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                  </span>
-                  <span>Paper</span>
-                </a>
-              </span>
-              <!-- ArXiv Link. -->
-              <!----------------->
-              <span class="link-block">
-                <a href="https://arxiv.org/"
-                   class="external-link button is-normal is-rounded is-dark" rel="noopener noreferrer">
-                  <span class="icon">
-                        <svg
-                          width="20"
-                          height="20"
-                          fill="none"
-                          viewBox="0 0 17.732 24.269"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M573.549,280.916l2.266,2.738,6.674-7.84c.353-.47.52-.717.353-1.117a1.218,1.218,0,0,0-1.061-.748h0a.953.953,0,0,0-.712.262Z"
-                            transform="translate(-566.984 -271.548)"
-                            fill="#bdb9b4"
-                          />
-                          <path
-                            d="M579.525,282.225l-10.606-10.174a1.413,1.413,0,0,0-.834-.5,1.09,1.09,0,0,0-1.027.66c-.167.4-.047.681.319,1.206l8.44,10.242h0l-6.282,7.716a1.336,1.336,0,0,0-.323,1.3,1.114,1.114,0,0,0,1.04.69A.992.992,0,0,0,571,293l8.519-7.92A1.924,1.924,0,0,0,579.525,282.225Z"
-                            transform="translate(-566.984 -271.548)"
-                            fill="#b31b1b"
-                          />
-                          <path
-                            d="M584.32,293.912l-8.525-10.275,0,0L573.53,280.9l-1.389,1.254a2.063,2.063,0,0,0,0,2.965l10.812,10.419a.925.925,0,0,0,.742.282,1.039,1.039,0,0,0,.953-.667A1.261,1.261,0,0,0,584.32,293.912Z"
-                            transform="translate(-566.984 -271.548)"
-                            fill="#bdb9b4"
-                          />
-                        </svg>
-                      </span>
-                  <span>ArXiv</span>
-                </a>
-              </span>
-              <!-- Code Link. -->
-              <!---------------->
-              <span class="link-block">
-                <a href="https://github.com/zihaosheng/"
-                   class="external-link button is-normal is-rounded is-dark" rel="noopener noreferrer">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
-                  </a>
-              </span>
-              <!-- Checkpoint Link. -->
-              <!----------------->
-              <span class="link-block">
-                <a href="https://huggingface.co/zihaosheng/"
-                   class="external-link button is-normal is-rounded is-dark" rel="noopener noreferrer">
-                  <span class="icon">🤗</span>
-                  <span>Models</span>
-                </a>
-              </span>
-            </div>
+          <div class="author-row">
+            <a href="https://scholar.google.com/citations?user=h1Ig9g0AAAAJ">Steven T. Parker<sup>1</sup></a>
+            <a href="https://scholar.google.com/citations?user=OipIar8AAAAJ">David A. Noyce<sup>1</sup></a>
+            <a href="https://scholar.google.com/citations?user=DPN2wc4AAAAJ">Sikai Chen<sup>1,✉</sup></a>
           </div>
         </div>
+        <div class="institutions" aria-label="Author affiliations">
+          <a class="institution" href="https://www.wisc.edu/" target="_blank" rel="noopener noreferrer"><span class="institution-logo"><img class="uw-logo" src="static/images/uw-madison-logo.png" width="381" height="599" alt="University of Wisconsin–Madison crest"></span><span><sup>1</sup> University of Wisconsin–Madison</span></a>
+          <a class="institution" href="https://www.uwyo.edu/" target="_blank" rel="noopener noreferrer"><span class="institution-logo"><svg class="wyoming-mark" viewBox="0 0 90 150" role="img" aria-label="University of Wyoming horse and rider"><image href="static/images/wyoming-logo.png" width="1170" height="150"/></svg></span><span><sup>2</sup> University of Wyoming</span></a>
+          <a class="institution" href="https://www.purdue.edu/" target="_blank" rel="noopener noreferrer"><span class="institution-logo"><img class="purdue-logo" src="static/images/purdue-logo.png" width="2560" height="1371" alt="Purdue University Motion P logo"></span><span><sup>3</sup> Purdue University</span></a>
+        </div>
+        <p class="correspondence"><span>✉</span> Corresponding author</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://arxiv.org/pdf/2610.10650" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-paper"/></svg>Paper PDF</a>
+          <a class="button button-secondary" href="https://arxiv.org/abs/2610.10650" target="_blank" rel="noopener noreferrer">arXiv<svg class="icon"><use href="#i-external"/></svg></a>
+          <a class="button button-secondary" href="https://huggingface.co/zihaosheng" target="_blank" rel="noopener noreferrer">Models<svg class="icon"><use href="#i-external"/></svg></a>
+          <a class="button button-secondary" href="https://github.com/zihaosheng/TMP-LLM" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-code"/></svg>Code</a>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
+    <section class="study-overview" aria-label="Study at a glance">
+      <ol class="container study-flow">
+        <li class="study-step">
+          <span class="study-symbol" aria-hidden="true"><svg class="icon"><use href="#i-paper"/></svg></span>
+          <div class="study-copy"><p class="study-main"><strong>843</strong> <span>Historical TMP records</span></p><p class="study-detail">WisTMP · 2019–2025</p></div>
+        </li>
+        <li class="study-step">
+          <span class="study-symbol" aria-hidden="true"><svg class="icon"><use href="#i-code"/></svg></span>
+          <div class="study-copy"><p class="study-main"><strong>5,048</strong> <span>Instruction–answer pairs</span></p><p class="study-detail">Built from real project documents</p></div>
+        </li>
+        <li class="study-step">
+          <span class="study-symbol" aria-hidden="true"><svg class="icon"><use href="#i-model"/></svg></span>
+          <div class="study-copy"><p class="study-main"><strong>6</strong> <span>Open-source models</span></p><p class="study-detail">Three families · 7B/8B &amp; 14B</p></div>
+        </li>
+        <li class="study-step">
+          <span class="study-symbol" aria-hidden="true"><svg class="icon"><use href="#i-sections"/></svg></span>
+          <div class="study-copy"><p class="study-main"><strong>6</strong> <span>Target sections</span></p><p class="study-detail">Operational content · Sections 4–9</p></div>
+        </li>
+      </ol>
+    </section>
 
-
-
-<!--<section class="section">-->
-<!--  <div class="container is-max-desktop">-->
-<!--    <div class="content has-text-centered">-->
-<!--      <video id="replay-video" controls muted preload playsinline width="75%">-->
-<!--        <source src="./static/videos/replay.mp4" type="video/mp4">-->
-<!--      </video>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</section>-->
-
-
-
-
-<!------------------------------------------------------------------------------------------>
-<!-------------------------------- Teaser -------------------------------->
-<!------------------------------------------------------------------------------------------>
-<section class="section" style="margin-top: -4rem;">
-    <div id="teaser" class="container is-max-desktop" style="font-family: 'Google Sans', sans-serif; font-size: 1.1rem;">
-        <figure id="table1" style="text-align: center; font-size: 17px;">
-            <img src="./static/images/fig1.svg" alt="Framework" />
+    <section class="section section-anchor" id="method" aria-label="Method">
+      <div class="container">
+        <div class="section-heading"><p class="eyebrow">METHOD</p><p>Learn from completed WisTMP documents, then generate section-specific content from a new project's foundational information.</p></div>
+        <ol class="method-steps">
+          <li><span>01</span><div><h3>Build the corpus</h3><p>Convert, clean and structure historical TMP documents into question–answer pairs.</p></div></li>
+          <li><span>02</span><div><h3>Adapt the models</h3><p>Fine-tune LLaMA, Qwen and DeepSeek models using low-rank adaptation.</p></div></li>
+          <li><span>03</span><div><h3>Draft locally</h3><p>Use project context and a target-section query to generate operational TMP content.</p></div></li>
+        </ol>
+        <figure class="paper-figure">
+          <div class="figure-toolbar"><span>FIG. 01 <b>End-to-end framework</b></span><a href="static/images/fig1.svg" class="figure-zoom" data-figure="static/images/fig1.svg" data-caption="End-to-end LLM-assisted TMP preparation framework"><svg class="icon"><use href="#i-expand"/></svg>Expand figure</a></div>
+          <img src="static/images/fig1.svg" width="1382" height="662" alt="Four-stage framework: dataset construction, selection of six open-source models, LoRA fine-tuning, and local deployment." loading="lazy" decoding="async">
+          <figcaption>Dataset construction, model selection, LoRA fine-tuning and local deployment.</figcaption>
         </figure>
-    </div>
-</section>
 
-
-<section class="section">
-    <div class="container is-max-desktop">
-        <h2 class="title is-3 has-text-centered">Framework</h2>
-        <div class="column is-full">
-            <figure style="text-align: center; font-size: 17px;">
-                <img src="./static/images/fig2.svg" alt="Framework" />
-            </figure>
-        </div>
-    </div>
-</section>
-
-
-<section class="section">
-    <div class="container is-max-desktop">
-        <h2 class="title is-3 has-text-centered">Demo</h2>
-        <div class="column is-full">
-            <video controls autoplay muted playsinline style="width: 100%; height: auto;">
-                <source src="static/videos/case1.webm" type="video/webm">
-            </video>
-        </div>
-        <div class="column is-full">
-            <video controls autoplay muted playsinline style="width: 100%; height: auto;">
-                <source src="static/videos/case2.webm" type="video/webm">
-            </video>
-        </div>
-        <div class="column is-full">
-            <video controls autoplay muted playsinline style="width: 100%; height: auto;">
-                <source src="static/videos/case3.webm" type="video/webm">
-            </video>
-        </div>
-    </div>
-</section>
-
-
-
-
-
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title is-4" style="font-family: 'Google Sans', sans-serif;">BibTeX</h2>
-    <pre id="bibtex-code" style="font-family: 'Google Sans', sans-serif; font-size: 18px; padding: 1rem; background: #f5f5f5; border-radius: 5px; white-space: pre;">
-      <code>@article{sheng2026large,
-      title={Large Language Model-Assisted Preparation of Transportation Management Plans: A Case Study with WisDOT WisTMP System},
-      author={Authors},
-      journal={arXiv preprint arXiv:},
-      year={2026}
-      }
-    </code></pre>
-    <button type="button" id="copy-btn"
-          style="position: absolute; top: 5px; right: 5px; padding: 5px 10px; font-size: 14px; cursor: pointer;">
-    📋 Copy
-  </button>
-  </div>
-  <script>
-(function () {
-  const btn = document.getElementById('copy-btn');
-  const pre = document.querySelector('#bibtex-code code');
-
-  function fallbackCopy(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.top = '-9999px';
-    document.body.appendChild(ta);
-    ta.select();
-    try {
-      document.execCommand('copy');
-      return true;
-    } catch (e) {
-      return false;
-    } finally {
-      document.body.removeChild(ta);
-    }
-  }
-
-  btn.addEventListener('click', async function () {
-    const code = pre ? pre.innerText : '';
-    if (navigator.clipboard && window.isSecureContext) {
-      try {
-        await navigator.clipboard.writeText(code);
-        btn.textContent = '✅ Copied';
-        setTimeout(()=> btn.textContent = '📋 Copy', 1200);
-        return;
-      } catch (e) {}
-    }
-    const ok = fallbackCopy(code);
-    btn.textContent = ok ? '✅ Copied' : '❌ Failed';
-    setTimeout(()=> btn.textContent = '📋 Copy', 1200);
-  });
-})();
-</script>
-</section>
-
-
-<footer class="footer">
-  <div class="container">
-    <div class="content has-text-centered">
-      <a class="icon-link"
-         href="https://arxiv.org/">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://github.com/zihaosheng" class="external-link" disabled>
-        <i class="fab fa-github"></i>
-      </a>
-    </div>
-    <div class="columns is-centered">
-      <div class="column is-7">
-        <div class="content">
-          <p>This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-            Template from <a
-              href="https://github.com/VLA-Adapter/VLA-Adapter.github.io">VLA-Adapter</a>.
-          </p>
-        </div>
+        <div class="dataset-heading"><div><p class="eyebrow">DATASET CONSTRUCTION</p></div><p>Sections 1–3 supply the context. Each available section from 4–9 becomes a separate generation target, yielding up to six training pairs per TMP.</p></div>
+        <figure class="paper-figure">
+          <div class="figure-toolbar"><span>FIG. 02 <b>Dataset construction</b></span><a href="static/images/fig2.svg" class="figure-zoom" data-figure="static/images/fig2.svg" data-caption="WisTMP dataset construction pipeline"><svg class="icon"><use href="#i-expand"/></svg>Expand figure</a></div>
+          <img src="static/images/fig2.svg" width="1555" height="682" alt="Historical WisTMP PDFs are converted to Markdown, cleaned and de-identified, split by section, and structured as instruction, input and output JSON." loading="lazy" decoding="async">
+          <figcaption>PDF-to-Markdown conversion, cross-page table merging, version filtering and de-identification precede QA pair construction.</figcaption>
+        </figure>
       </div>
-    </div>
-  </div>
-</footer>
+    </section>
 
+    <section class="section results-section section-anchor" id="results" aria-label="Results">
+      <div class="container">
+        <div class="section-heading"><p class="eyebrow">RESULTS</p><p>Fine-tuning improves all six models. In this study, moving from 7B/8B to 14B does not consistently improve generation quality.</p></div>
+        <div class="results-grid">
+          <figure class="performance-chart" aria-labelledby="chart-title">
+            <div class="chart-heading"><h3 id="chart-title">Before &amp; after fine-tuning</h3><p>Mean BLEU-4 and ROUGE-1/2/L score · Higher is better</p></div>
+            <div class="chart-legend"><span><i class="before-swatch"></i>Base model</span><span><i class="after-swatch"></i>Fine-tuned</span></div>
+            <div class="bar-chart">
+              <div class="bar-row"><div class="bar-label">LLaMA 3.1<small>8B</small></div><div class="bar-pair"><div class="bar-track"><span class="bar before" style="--score:20.667%"></span><b>12.4</b></div><div class="bar-track"><span class="bar after" style="--score:88.5%"></span><b>53.1</b></div></div></div>
+              <div class="bar-row"><div class="bar-label">DeepSeek R1 Distill<small>8B</small></div><div class="bar-pair"><div class="bar-track"><span class="bar before" style="--score:15.533%"></span><b>9.32</b></div><div class="bar-track"><span class="bar after" style="--score:91.833%"></span><b>55.1</b></div></div></div>
+              <div class="bar-row best-row"><div class="bar-label">Qwen 2.5<small>7B · Best mean score</small></div><div class="bar-pair"><div class="bar-track"><span class="bar before" style="--score:22.5%"></span><b>13.5</b></div><div class="bar-track"><span class="bar after" style="--score:94%"></span><b>56.4</b></div></div></div>
+              <div class="bar-row"><div class="bar-label">Qwen 3<small>14B</small></div><div class="bar-pair"><div class="bar-track"><span class="bar before" style="--score:19.5%"></span><b>11.7</b></div><div class="bar-track"><span class="bar after" style="--score:93%"></span><b>55.8</b></div></div></div>
+              <div class="bar-row"><div class="bar-label">DeepSeek R1 Distill<small>14B</small></div><div class="bar-pair"><div class="bar-track"><span class="bar before" style="--score:16.067%"></span><b>9.64</b></div><div class="bar-track"><span class="bar after" style="--score:92.333%"></span><b>55.4</b></div></div></div>
+              <div class="bar-row"><div class="bar-label">Qwen 2.5<small>14B</small></div><div class="bar-pair"><div class="bar-track"><span class="bar before" style="--score:19.667%"></span><b>11.8</b></div><div class="bar-track"><span class="bar after" style="--score:93.833%"></span><b>56.3</b></div></div></div>
+            </div>
+            <figcaption>Scores measure text similarity to reference TMP content. Qwen 2.5 models use the Instruct-1M variants.</figcaption>
+          </figure>
+          <aside class="efficiency-panel" aria-labelledby="efficiency-title">
+            <h3 id="efficiency-title">Inference time</h3>
+            <div class="time-stat">57.7<span>s</span></div><p class="time-caption">Mean generation time for Sections 4–9<br>Qwen2.5-7B-Instruct-1M · ±24.3 s</p>
+            <div class="efficiency-comparison"><div><span>Qwen 2.5 · 7B</span><strong>57.7 s</strong><span class="mini-track"><i style="width:63.27%"></i></span></div><div><span>Qwen 2.5 · 14B</span><strong>91.2 s</strong><span class="mini-track"><i style="width:100%"></i></span></div></div>
+            <p class="hardware-note">Measured on a single NVIDIA RTX A6000. Times cover generation of all six target sections.</p>
+            <a class="text-link" href="#demo">See the drafting workflow<svg class="icon"><use href="#i-arrow"/></svg></a>
+          </aside>
+        </div>
+        <div class="model-comparison"><h3 id="model-comparison-title" class="model-comparison-title">Fine-tuned text generation scores and mean generation time for all six target sections.</h3><div class="table-scroll" role="region" aria-label="Full model comparison" tabindex="0"><table aria-labelledby="model-comparison-title"><thead><tr><th scope="col">Model</th><th scope="col">BLEU-4 ↑</th><th scope="col">ROUGE-1 ↑</th><th scope="col">ROUGE-2 ↑</th><th scope="col">ROUGE-L ↑</th><th scope="col">Mean ↑</th><th scope="col">Time ↓</th></tr></thead><tbody>
+          <tr><th scope="row">LLaMA-3.1-8B-Instruct</th><td>45.9</td><td>61.3</td><td>50.7</td><td>54.5</td><td>53.1</td><td>55.8 s</td></tr>
+          <tr><th scope="row">DeepSeek-R1-Distill-Llama-8B</th><td>48.0</td><td>62.9</td><td>52.7</td><td>56.7</td><td>55.1</td><td>51.6 s</td></tr>
+          <tr class="best-model"><th scope="row">Qwen2.5-7B-Instruct-1M</th><td>49.6</td><td>63.8</td><td>53.9</td><td>58.1</td><td><strong>56.4</strong></td><td>57.7 s</td></tr>
+          <tr><th scope="row">Qwen3-14B</th><td>49.9</td><td>62.9</td><td>53.1</td><td>57.4</td><td>55.8</td><td>102.9 s</td></tr>
+          <tr><th scope="row">DeepSeek-R1-Distill-Qwen-14B</th><td>49.6</td><td>62.7</td><td>52.4</td><td>56.7</td><td>55.4</td><td>100.7 s</td></tr>
+          <tr><th scope="row">Qwen2.5-14B-Instruct-1M</th><td>50.8</td><td>63.5</td><td>53.3</td><td>57.6</td><td>56.3</td><td>91.2 s</td></tr>
+        </tbody></table></div></div>
+        <div class="findings-note"><span class="note-marker" aria-hidden="true">↳</span><div><h3>A drafting assistant, with room to improve.</h3><p>Strategy-level evaluation reveals over-generation, while the error analysis identifies unsupported project-specific justifications and inaccurate cost estimates. The results support assisted drafting and continued practitioner review.</p></div></div>
+      </div>
+    </section>
 
+    <section class="section demo-section section-anchor" id="demo" aria-label="Demo">
+      <div class="container">
+        <div class="section-heading demo-heading"><div><p class="eyebrow">DEMO</p></div><p>Three recordings of the locally deployed demonstration system. Select a case and play the recording to explore TMP drafting.</p></div>
+        <div class="demo-shell">
+          <div class="demo-toolbar"><span><i class="local-dot" aria-hidden="true"></i>LOCAL DEMONSTRATION</span><div class="demo-tabs" role="tablist" aria-label="Demo recordings"><button type="button" role="tab" id="case-tab-1" aria-selected="true" aria-controls="demo-panel" data-src="static/videos/case1.webm" data-case="01">Case 01</button><button type="button" role="tab" id="case-tab-2" aria-selected="false" aria-controls="demo-panel" tabindex="-1" data-src="static/videos/case2.webm" data-case="02">Case 02</button><button type="button" role="tab" id="case-tab-3" aria-selected="false" aria-controls="demo-panel" tabindex="-1" data-src="static/videos/case3.webm" data-case="03">Case 03</button></div></div>
+          <div id="demo-panel" class="demo-panel" role="tabpanel" aria-labelledby="case-tab-1" tabindex="0"><video id="demo-video" controls playsinline preload="metadata" src="static/videos/case1.webm" poster="static/images/demo-poster.jpg" aria-label="Case 01: local TMP drafting demonstration">Your browser does not support WebM video. <a href="static/videos/case1.webm">Open the recording</a>.</video><button id="demo-play" class="demo-play" type="button" aria-label="Play Case 01 recording" hidden><svg class="icon"><use href="#i-play"/></svg><span>Play recording</span></button></div>
+          <div class="demo-caption"><div><span id="demo-case-label">CASE 01</span><h3>LLM-assisted TMP preparation</h3></div><a id="recording-link" class="text-link" href="static/videos/case1.webm" target="_blank" rel="noopener noreferrer">Open recording<svg class="icon"><use href="#i-external"/></svg></a></div>
+        </div>
+        <noscript><p class="noscript-note">Additional recordings: <a href="static/videos/case2.webm">Case 02</a> · <a href="static/videos/case3.webm">Case 03</a>.</p></noscript>
+        <div class="deployment-note"><p><span>LOCAL BY DESIGN</span>Inference uses locally deployed models so sensitive project information is not sent to external model APIs.</p><p><span>ENGINEER IN THE LOOP</span>Generated content provides a draft for review, with project-specific strategy choices, justifications and costs requiring particular attention.</p></div>
+      </div>
+    </section>
 
+    <section class="section citation-section section-anchor" id="citation" aria-label="Citation">
+      <div class="container citation-grid"><div><p class="eyebrow">CITATION</p><p>If this work is useful to your research, please cite our paper.</p><a class="text-link" href="https://arxiv.org/abs/2610.10650" target="_blank" rel="noopener noreferrer">arXiv:2610.10650<svg class="icon"><use href="#i-external"/></svg></a></div>
+        <div class="citation-box"><div class="citation-toolbar"><span>BibTeX</span><button type="button" id="copy-btn">Copy citation</button></div><pre tabindex="0" aria-label="BibTeX citation"><code id="bibtex-code">@article{sheng2026large,
+  title={Large Language Model-Assisted Preparation of
+    Transportation Management Plans: A Case Study
+    with {WisDOT} {WisTMP} System},
+  author={Sheng, Zihao and Li, Pei and Huang, Zilin and
+    Chen, Yen-Jung and Luo, Yuhao and Wan, Zhengyang and
+    Parker, Steven T. and Noyce, David A. and Chen, Sikai},
+  journal={arXiv preprint arXiv:2610.10650},
+  year={2026},
+  doi={10.48550/arXiv.2610.10650},
+  url={https://arxiv.org/abs/2610.10650}
+}</code></pre><p class="copy-status" id="copy-status" role="status" aria-live="polite"></p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-top"><a class="wordmark" href="#overview"><span class="road-mark" aria-hidden="true"><i></i></span>TMP<span class="wordmark-dash">—</span>LLM</a><p>Language models for transportation decision support.</p><a class="text-link" href="#overview">Back to top ↑</a></div><div class="container footer-bottom"><p>Research project · 2026</p><p>Page licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>. Original template: <a href="https://github.com/VLA-Adapter/VLA-Adapter.github.io">VLA-Adapter</a>.</p></div></footer>
+
+  <dialog id="figure-dialog" aria-labelledby="dialog-title"><div class="dialog-toolbar"><h2 id="dialog-title">Research figure</h2><button type="button" id="close-figure" aria-label="Close figure">Close <span aria-hidden="true">×</span></button></div><div class="dialog-image-wrap"><img id="dialog-image" alt=""></div><p class="dialog-hint">Scroll to inspect the full figure. Press Esc to close.</p></dialog>
 </body>
 </html>

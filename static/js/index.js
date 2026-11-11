@@ -1,127 +1,154 @@
-window.HELP_IMPROVE_VIDEOJS = false;
+'use strict';
 
-var INTERP_BASE = "./static/interpolation/stacked";
-var NUM_INTERP_FRAMES = 182;
-
-var interp_images = [];
-function preloadInterpolationImages() {
-  for (var i = 0; i < NUM_INTERP_FRAMES; i++) {
-    var path = INTERP_BASE + '/' + String(i).padStart(6, '0') + '.jpg';
-    interp_images[i] = new Image();
-    interp_images[i].src = path;
-  }
-}
-
-function setInterpolationImage(i) {
-  var image = interp_images[i];
-  image.ondragstart = function() { return false; };
-  image.oncontextmenu = function() { return false; };
-  image.style.width = "300px";
-  image.style.height = "auto";
-  image.style.display = "block";
-  image.style.margin = "0 auto";
-  $('#interpolation-image-wrapper').empty().append(image);
-}
-
-
-
-
-const INTERP_BASE1 = "./static/interpolation/stacked1";
-const NUM_INTERP_FRAMES1 = 147;
-
-const interp_images1 = [];
-function preloadInterpolationImages1() {
-  for (let i = 0; i < NUM_INTERP_FRAMES1; i++) {
-    const path = INTERP_BASE1 + '/' + String(i).padStart(6, '0') + '.jpg';
-    interp_images1[i] = new Image();
-    interp_images1[i].src = path;
-  }
-}
-
-function setInterpolationImage1(i) {
-  const image = interp_images1[i];
-  image.ondragstart = () => false;
-  image.oncontextmenu = () => false;
-  image.style.width = "300px";
-  image.style.height = "auto";
-  image.style.display = "block";
-  image.style.margin = "0 auto";
-  $("#interpolation-image-wrapper1").empty().append(image);
-}
-
-
-
-
-
-$(document).ready(function() {
-    // Check for click events on the navbar burger icon
-    $(".navbar-burger").click(function() {
-      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-      $(".navbar-burger").toggleClass("is-active");
-      $(".navbar-menu").toggleClass("is-active");
-
-    });
-
-    var options = {
-			slidesToScroll: 1,
-			slidesToShow: 3,
-			loop: true,
-			infinite: true,
-			autoplay: false,
-			autoplaySpeed: 3000,
-    }
-
-		// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
-
-    // Loop on each carousel initialized
-    for(var i = 0; i < carousels.length; i++) {
-    	// Add listener to  event
-    	carousels[i].on('before:show', state => {
-    		console.log(state);
-    	});
-    }
-
-    // Access to bulmaCarousel instance of an element
-    var element = document.querySelector('#my-element');
-    if (element && element.bulmaCarousel) {
-    	// bulmaCarousel instance is available as element.bulmaCarousel
-    	element.bulmaCarousel.on('before-show', function(state) {
-    		console.log(state);
-    	});
-    }
-
-    /*var player = document.getElementById('interpolation-video');
-    player.addEventListener('loadedmetadata', function() {
-      $('#interpolation-slider').on('input', function(event) {
-        console.log(this.value, player.duration);
-        player.currentTime = player.duration / 100 * this.value;
-      })
-    }, false);*/
-    preloadInterpolationImages();
-
-    $('#interpolation-slider').on('input', function(event) {
-      setInterpolationImage(this.value);
-    });
-    setInterpolationImage(0);
-    $('#interpolation-slider').prop('max', NUM_INTERP_FRAMES - 1);
-	
-	
-	
-	preloadInterpolationImages1();
-  $("#interpolation-slider1").on("input", function () {
-    setInterpolationImage1(this.value);
+(() => {
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.getElementById('site-nav');
+  const setMenu = open => {
+    toggle.setAttribute('aria-expanded', String(open));
+    nav.classList.toggle('is-open', open);
+  };
+  toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('click', event => {
+    if (!event.target.closest('.site-header')) setMenu(false);
   });
-  setInterpolationImage1(0);
-  $("#interpolation-slider1").prop("max", NUM_INTERP_FRAMES1 - 1);
-  
-  
-  
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      toggle.focus();
+    }
+  });
 
-    bulmaSlider.attach();
+  const navLinks = [...nav.querySelectorAll('a[href^="#"]')];
+  const sections = navLinks.map(link => document.querySelector(link.getAttribute('href')));
+  let ticking = false;
+  const updateLocation = () => {
+    const marker = window.scrollY + 150;
+    let active = 0;
+    sections.forEach((section, index) => {
+      if (section.offsetTop <= marker) active = index;
+    });
+    navLinks.forEach((link, index) => {
+      if (index === active) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    ticking = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateLocation);
+      ticking = true;
+    }
+  }, { passive: true });
+  window.addEventListener('resize', updateLocation);
+  window.addEventListener('load', updateLocation);
+  updateLocation();
 
-})
+  const dialog = document.getElementById('figure-dialog');
+  const dialogImage = document.getElementById('dialog-image');
+  let figureOpener = null;
+  document.querySelectorAll('[data-figure]').forEach(link => {
+    link.addEventListener('click', event => {
+      if (typeof dialog.showModal !== 'function') return;
+      event.preventDefault();
+      figureOpener = link;
+      const caption = link.dataset.caption;
+      document.getElementById('dialog-title').textContent = caption;
+      dialogImage.src = link.dataset.figure;
+      dialogImage.alt = caption;
+      dialog.showModal();
+    });
+  });
+  document.getElementById('close-figure').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => {
+    const rect = dialog.getBoundingClientRect();
+    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+  });
+  dialog.addEventListener('close', () => figureOpener?.focus({ preventScroll: true }));
 
+  const tabs = [...document.querySelectorAll('.demo-tabs [role="tab"]')];
+  const video = document.getElementById('demo-video');
+  const playButton = document.getElementById('demo-play');
+  playButton.hidden = false;
+  playButton.addEventListener('click', async () => {
+    try { await video.play(); }
+    catch (_) { playButton.querySelector('span').textContent = 'Try playing again'; }
+  });
+  video.addEventListener('play', () => { playButton.hidden = true; });
+  video.addEventListener('pause', () => { playButton.hidden = false; });
+  video.addEventListener('ended', () => {
+    playButton.hidden = false;
+    playButton.querySelector('span').textContent = 'Replay recording';
+  });
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => {
+      if (tab.getAttribute('aria-selected') === 'true') return;
+      video.pause();
+      tabs.forEach(item => {
+        const selected = item === tab;
+        item.setAttribute('aria-selected', String(selected));
+        item.tabIndex = selected ? 0 : -1;
+      });
+      video.removeAttribute('poster');
+      video.src = tab.dataset.src;
+      video.setAttribute('aria-label', `Case ${tab.dataset.case}: local TMP drafting demonstration`);
+      playButton.hidden = false;
+      playButton.setAttribute('aria-label', `Play Case ${tab.dataset.case} recording`);
+      playButton.querySelector('span').textContent = 'Play recording';
+      video.load();
+      document.getElementById('demo-panel').setAttribute('aria-labelledby', tab.id);
+      document.getElementById('demo-case-label').textContent = `CASE ${tab.dataset.case}`;
+      document.getElementById('recording-link').href = tab.dataset.src;
+    });
+    tab.addEventListener('keydown', event => {
+      let next;
+      if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+      else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = tabs.length - 1;
+      else return;
+      event.preventDefault();
+      tabs[next].focus();
+      tabs[next].click();
+    });
+  });
+  // Restore the first recording's poster when returning to its tab.
+  tabs[0].addEventListener('click', () => video.setAttribute('poster', 'static/images/demo-poster.jpg'));
 
-
-
+  const copyButton = document.getElementById('copy-btn');
+  const copyStatus = document.getElementById('copy-status');
+  let copyTimer;
+  const fallbackCopy = text => {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.readOnly = true;
+    area.style.position = 'fixed';
+    area.style.left = '-9999px';
+    document.body.appendChild(area);
+    area.select();
+    let success = false;
+    try { success = document.execCommand('copy'); }
+    catch (_) { /* The status message provides a manual fallback. */ }
+    area.remove();
+    copyButton.focus({ preventScroll: true });
+    return success;
+  };
+  copyButton.addEventListener('click', async () => {
+    const text = document.getElementById('bibtex-code').textContent.trim();
+    let success = false;
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        success = true;
+      } catch (_) { /* Fall back for restricted clipboard contexts. */ }
+    }
+    if (!success) success = fallbackCopy(text);
+    copyButton.textContent = success ? 'Copied!' : 'Copy citation';
+    copyStatus.textContent = success ? 'Citation copied to clipboard.' : 'Copy was unavailable. Select and copy the BibTeX text above.';
+    clearTimeout(copyTimer);
+    copyTimer = setTimeout(() => {
+      copyButton.textContent = 'Copy citation';
+      copyStatus.textContent = '';
+    }, 4000);
+  });
+})();
