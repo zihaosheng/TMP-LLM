@@ -275,9 +275,9 @@ dialog::backdrop{background:#10242dd9;backdrop-filter:blur(3px)}
 .publication-header .institutions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px 30px;max-width:1100px;margin-top:25px}
 .publication-header .institution{display:inline-flex;flex-direction:row;align-items:center;gap:8px;padding:0;color:#000;font-size:16px;line-height:1.5;text-align:left;min-width:0}
 .publication-header .institution:hover{color:#000}
-.publication-header .institution-logo{height:20px;flex:none;line-height:0}
-.publication-header .institution-logo .uw-logo{height:20px;width:auto}
-.publication-header .wyoming-mark{height:20px;width:12px}
+.publication-header .institution-logo{height:28px;flex:none;line-height:0}
+.publication-header .institution-logo .uw-logo{height:28px;width:auto}
+.publication-header .wyoming-mark{height:28px;width:16.8px}
 .publication-header .institution-logo .purdue-logo{height:18px;width:auto}
 .publication-header .institutions sup{color:#000}
 .publication-header .correspondence{color:#000;font-size:16px;line-height:1.5;margin-top:20px}
